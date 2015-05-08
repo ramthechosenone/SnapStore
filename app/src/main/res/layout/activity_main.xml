@@ -15,4 +15,13 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:background="#FFCC7832" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:id="@+id/Camera_button"
+        android:layout_below="@+id/fileUploadButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="71dp" />
 </RelativeLayout>

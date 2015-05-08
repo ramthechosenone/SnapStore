@@ -1,8 +1,12 @@
 package com.example.ram.snapstore;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,38 +21,55 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AppKeyPair;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+   // public static final String TAG = MainActivity.class.getSimpleName();
     final static private String APP_KEY = "6wuzgbhwp7ysegs";
     final static private String APP_SECRET = "64e0viye5qaqvg9";
-    final String path = Environment.getExternalStorageDirectory().toString() + "/";
-   // final String ImagePath = Environment.getExternalStorageDirectory().toString() + "/" + IMAGE_DIRECTORY + "/";
-    final String imagePath = "/storage/emulated/0/DCIM/Camera/";
 
-    // In the class declaration section:
+    public static final int MEDIA_TYPE_IMAGE = 1;
+
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 0;
+    private Uri fileUri;
+
+
+    public static File mediaFile;
+
+
     private DropboxAPI<AndroidAuthSession> mDBApi;
 
-    @InjectView(R.id.fileUploadButton) Button mFileUpload;
+    @InjectView(R.id.fileUploadButton)
+    Button mFileUpload;
+    @InjectView(R.id.Camera_button)
+    Button mCameraButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
 
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ButterKnife.inject(this);
 
-       // mfileupload.setOnClickListener(this);
+
         mFileUpload.setOnClickListener(this);
+
+        mCameraButton.setOnClickListener(this);
 
         AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
         AndroidAuthSession session = new AndroidAuthSession(appKeys);
@@ -56,85 +77,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
 
 
-//        if (mDBApi != null) {
-//            System.out.println("inside if");
-//            Toast.makeText(this, "Sup man, its working", Toast.LENGTH_LONG).show();
-//        } else {
-//            System.out.println("inside end");
-//            Toast.makeText(this, "Sup man, its  not working", Toast.LENGTH_LONG).show();
-//        }
 
-        System.out.println("authenticating");
 
         mDBApi.getSession().startOAuth2Authentication(MainActivity.this);
-        System.out.println("auth'd");
-
-        System.out.println(mFileUpload);
-
-//        mFileUpload.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //uploader();
-//                FileUpload FileUpload = new FileUpload(mDBApi,this,path);
-//                FileUpload.execute();
-//            }
-//
-//        });
-
-
-
-
-//        mDBApi.getSession().startOAuth2Authentication(MainActivity.this);
-//        System.out.println("auth'd");
-        //onResume();
-
-
-      //  final FileUpload fileUpload = new FileUpload();
-
-        // System.out.println("fileupload object created");
-
-        //final String path = "/storage/emulated/0/hey.txt";
-
-
-        // putFile(fileUpload);
-
-
-        //Log.v(TAG, mDBApi.toString() );
-
-
-        //mDBApi.getSession().startOAuth2Authentication(MainActivity.this);
-//        try {
-//            upload(mDBApi);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("calling putfile inside runnable");
-//                try {
-//                    upload(mDBApi);
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
 
     }
 
-//    public void puttingFile(FileUpload fileUpload) {
-//
-//        System.out.println("putting file");
-//        try {
-//            System.out.println("in putfile in try");
-//            upload(mDBApi);
-//        } catch (FileNotFoundException e) {
-//            System.out.println("filentfound in putfilefn");
-//            e.printStackTrace();
-//        }
-//    }
+
 
     protected void onResume() {
         super.onResume();
@@ -155,58 +104,97 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        FileUpload fileUpload = new FileUpload(mDBApi,this,imagePath);
-        fileUpload.execute();
+
+//        if (mFileUpload != null) {
+//            FileUpload fileUpload = new FileUpload(mDBApi, this, imagePath);
+//            fileUpload.execute();
+//        }
+
+        if (mCameraButton != null) {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+           // System.out.println(fileUri);
+
+
+
+
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+
+            startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+
+
+        }
     }
 
+    private static Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
 
-//    public void upload(final DropboxAPI<AndroidAuthSession> mDBApi) throws FileNotFoundException {
-//
-//
-//
-//
-//        //File file = new File(path);
-//
-//
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                uploader(mDBApi);
-//                //Log.i("DbExampleLog", "The uploaded file's rev is: " + response.rev);
-//            }
-//
-//        });
-//    }
+    /**
+     * Create a File for saving an image
+     */
+    private static File getOutputMediaFile(int type)
+    {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
 
-//    public void uploader() {
-//
-//
-//        System.out.println("uploading");
-//        String path = Environment.getExternalStorageDirectory().toString() + "/";
-//        File file = new File(path, "hey.txt");
-//        System.out.println("file object created");
-//        FileInputStream inputStream = null;
-//        try {
-//            inputStream = new FileInputStream(file);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        //DropboxAPI.Entry response = null;
-//        try {
-//            mDBApi.putFile("/magnum-opus.txt", inputStream,
-//                    file.length(), null, null);
-//            System.out.println("uploaded !!");
-//        } catch (DropboxException e) {
-//            System.out.println("failed");
-//            e.printStackTrace();
-//        }
-//    }
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
 
-//    @Override
-//    public void onClick(View v) {
-//        uploader(mDBApi);
-//    }
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        File temp;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_" + timeStamp + ".jpg");
+
+        } else {
+            return null;
+        }
+        return mediaFile;
+    }
+
+    @Override
+    protected void onActivityResult(int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, int resultCode, Intent data) {
+        // Auto-generated method stub
+        super.onActivityResult(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, resultCode, data);
+
+
+        FileUpload fileUpload = new FileUpload(mDBApi,mediaFile);
+        fileUpload.execute();
+
+
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,6 +1,8 @@
 package com.example.ram.snapstore;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -20,39 +22,37 @@ import java.io.FileNotFoundException;
 public class FileUpload extends AsyncTask {
 
 
-    MainActivity mainAct = new MainActivity();
+
 
     DropboxAPI<AndroidAuthSession> mDBApi;
-    Context context;
-    String path;
+   // Context context;
 
-    public FileUpload(DropboxAPI<AndroidAuthSession> mDBApi, MainActivity mainActivity, String path) {
-        this.context = mainActivity.getApplicationContext();
+    File file;
+
+
+
+    public FileUpload(DropboxAPI<AndroidAuthSession> mDBApi, File b) {
+       // this.context = mainActivity.getApplicationContext();
         this.mDBApi = mDBApi;
-        this.path = path;
+        this.file =  b;
+
     }
 
 
-//    public void FileUpload(DropboxAPI<AndroidAuthSession> mDBApi, Context context, String path) {
-//
-//        this.context = context.getApplicationContext();
-//        this.mDBApi = mDBApi;
-//        this.path = path;
-//    }
+
 
 
     @Override
     protected Object doInBackground(Object[] params) {
 
-        File file = new File(path, "IMG_20150508_031426.jpg");
-        System.out.println("file object created");
+
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        //DropboxAPI.Entry response = null;
+
         try {
             mDBApi.putFile("/Photos/magnum-opus.jpg", inputStream,
                     file.length(), null, null);
