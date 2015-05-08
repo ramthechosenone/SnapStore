@@ -31,6 +31,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     final static private String APP_KEY = "6wuzgbhwp7ysegs";
     final static private String APP_SECRET = "64e0viye5qaqvg9";
     final String path = Environment.getExternalStorageDirectory().toString() + "/";
+   // final String ImagePath = Environment.getExternalStorageDirectory().toString() + "/" + IMAGE_DIRECTORY + "/";
+    final String imagePath = "/storage/emulated/0/DCIM/Camera/";
 
     // In the class declaration section:
     private DropboxAPI<AndroidAuthSession> mDBApi;
@@ -153,7 +155,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        FileUpload fileUpload = new FileUpload(mDBApi,this,path);
+        FileUpload fileUpload = new FileUpload(mDBApi,this,imagePath);
         fileUpload.execute();
     }
 

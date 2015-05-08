@@ -44,7 +44,7 @@ public class FileUpload extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
 
-        File file = new File(path, "hey.txt");
+        File file = new File(path, "IMG_20150508_031426.jpg");
         System.out.println("file object created");
         FileInputStream inputStream = null;
         try {
@@ -54,7 +54,7 @@ public class FileUpload extends AsyncTask {
         }
         //DropboxAPI.Entry response = null;
         try {
-            mDBApi.putFile("/magnum-opus.txt", inputStream,
+            mDBApi.putFile("/Photos/magnum-opus.jpg", inputStream,
                     file.length(), null, null);
             System.out.println("uploaded !!");
             return true;
