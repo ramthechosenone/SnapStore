@@ -29,12 +29,15 @@ public class FileUpload extends AsyncTask {
 
     File file;
 
+    String fileName;
 
 
-    public FileUpload(DropboxAPI<AndroidAuthSession> mDBApi, File b) {
+
+    public FileUpload(DropboxAPI<AndroidAuthSession> mDBApi, File b, String fileName) {
        // this.context = mainActivity.getApplicationContext();
         this.mDBApi = mDBApi;
         this.file =  b;
+        this.fileName = fileName;
 
     }
 
@@ -46,6 +49,7 @@ public class FileUpload extends AsyncTask {
     protected Object doInBackground(Object[] params) {
 
 
+//        String fileName = mediaFile;
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -54,7 +58,7 @@ public class FileUpload extends AsyncTask {
         }
 
         try {
-            mDBApi.putFile("/Photos/magnum-opus.jpg", inputStream,
+            mDBApi.putFile("/Photos/"+fileName, inputStream,
                     file.length(), null, null);
             System.out.println("uploaded !!");
             return true;
