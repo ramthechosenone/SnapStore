@@ -1,12 +1,7 @@
 package com.example.ram.snapstore;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
+
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -19,37 +14,27 @@ import java.io.FileNotFoundException;
 /**
  * Created by Ram on 07-05-2015.
  */
+
+/**
+ * FileUpload extends AsyncTask
+ */
 public class FileUpload extends AsyncTask {
-
-
-
-
     DropboxAPI<AndroidAuthSession> mDBApi;
-   // Context context;
-
     File file;
-
     String fileName;
 
-
-
     public FileUpload(DropboxAPI<AndroidAuthSession> mDBApi, File b, String fileName) {
-       // this.context = mainActivity.getApplicationContext();
+        // this.context = mainActivity.getApplicationContext();
         this.mDBApi = mDBApi;
-        this.file =  b;
+        this.file = b;
         this.fileName = fileName;
-
     }
-
-
-
-
-
+    /**
+     * Uploading the image file to dropbox
+     */
     @Override
     protected Object doInBackground(Object[] params) {
 
-
-//        String fileName = mediaFile;
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -58,7 +43,7 @@ public class FileUpload extends AsyncTask {
         }
 
         try {
-            mDBApi.putFile("/Photos/"+fileName, inputStream,
+            mDBApi.putFile("/Photos/" + fileName, inputStream,
                     file.length(), null, null);
             System.out.println("uploaded !!");
             return true;
